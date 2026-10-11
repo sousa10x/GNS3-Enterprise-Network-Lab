@@ -1,0 +1,42 @@
+Documentação de Troubleshooting: Falha de Conectividade Inter-VLAN
+Projeto: Infraestrutura de Rede Empresarial Incidente: Falha de comunicação na VLAN 20 (Roteamento Inter-VLAN) Técnico Responsável: [Seu Nome]
+1. Descrição do Problema
+Durante a fase de testes e validação de uma nova topologia, identificou-se uma falha de comunicação afetando especificamente os hosts da VLAN 20.
+    • O que funcionou: Um host (PC1) conectado à porta de acesso da VLAN 10 no Switch Access 1 conseguiu realizar o ping (ICMP Echo Request) com sucesso para o PC2, localizado na VLAN 30 do Switch Access 2. O tráfego foi roteado corretamente pelo Switch Core (Gateway Layer 3).
+    • A Falha: Ao realizar o mesmo procedimento a partir de um host configurado logicamente com o IP da VLAN 20, também conectado ao Switch Access 1, não houve conectividade (falha no ping) para a VLAN 30 ou para o próprio gateway da rede 20.
+2. Metodologia de Investigação e Análise de Causa
+Para isolar o problema, a seguinte cadeia de testes foi executada, baseada no modelo OSI (de baixo para cima):
+    • Passo 1: Verificação da Base de Dados de VLANs (Camada 2)
+        ◦ Comando: show vlan brief no Switch Access 1.
+        ◦ Resultado: A VLAN 20 estava devidamente criada, ativa e nomeada na base de dados do switch. Nenhuma anomalia encontrada.
+    • Passo 2: Validação dos Links de Interconexão (Trunking 802.1Q)
+        ◦ Comando: show interfaces trunk no Switch Access 1 e no Core.
+        ◦ Resultado: O link físico entre o Switch de Acesso e o Core estava operando corretamente em modo Trunk, e a VLAN 20 constava na lista de VLANs allowed and active in management domain. Trunk validado.
+    • Passo 3: Validação do Gateway e Roteamento (Camada 3)
+        ◦ Ação: Teste de alcance da SVI (Switch Virtual Interface) da VLAN 20 no Switch Core e rastreamento de rota via traceroute.
+        ◦ Resultado: O roteamento no Core estava operante. O problema estava restrito à origem do tráfego (acesso do host).
+    • Passo 4: Auditoria da Interface do Dispositivo Final (Causa Raiz)
+        ◦ Comando: show interfaces fastethernet 0/1 switchport no Switch Access 1 (porta ligada ao PC).
+        ◦ Resultado: Identificou-se que a porta não possuía configurações de modo de acesso. Devido a isso, a interface permanecia no comportamento padrão de fábrica (VLAN 1 nativa e tentando negociar via DTP). O PC estava isolado na VLAN 1 física, mas configurado com um endereço IP da VLAN 20, causando a falha de roteamento.
+3. Observação Técnica: Mascaramento da Falha
+O diagnóstico inicial foi dificultado pelo fato de os computadores do laboratório estarem configurados com IPs Estáticos. Caso a rede estivesse operando com um servidor DHCP, essa falha de Camada 2 teria sido identificada instantaneamente: ao estar na VLAN errada (VLAN 1), o PC não conseguiria completar o processo DORA (Discover, Offer, Request, Acknowledge) com o servidor DHCP da VLAN 20 e assumiria um IP de APIPA (169.254.x.x), evidenciando rapidamente o erro de atribuição de porta.
+4. Resolução do Incidente e Validação
+Para corrigir a inconsistência e estabilizar o acesso do usuário, a configuração correta da porta (Edge Port) foi aplicada no Switch Access 1.
+Ações Aplicadas (CLI):
+Bash
+Switch-Access-1# configure terminal
+Switch-Access-1(config)# interface fastethernet 0/1
+Switch-Access-1(config-if)# description Link_PC_VLAN20
+Switch-Access-1(config-if)# switchport mode access
+Switch-Access-1(config-if)# switchport access vlan 20
+Switch-Access-1(config-if)# spanning-tree portfast
+Switch-Access-1(config-if)# end
+Switch-Access-1# write memory
+(Nota: O parâmetro spanning-tree portfast foi adicionado como boa prática para dispositivos finais, garantindo a transição imediata da porta para o estado de encaminhamento).
+Testes Pós-Resolução (Validação):
+    1. O comando show interfaces fa0/1 switchport confirmou os status:
+        ◦ Administrative Mode: static access
+        ◦ Operational Mode: static access
+        ◦ Access Mode VLAN: 20
+    2. Um novo teste de ping foi disparado da máquina na VLAN 20 em direção à máquina na VLAN 30.
+    3. Status: Comunicação Inter-VLAN estabelecida com sucesso. Roteamento e segmentação operando conforme o projeto. Incidente encerrado.
