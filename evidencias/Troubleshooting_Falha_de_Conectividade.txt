@@ -40,3 +40,4 @@ Testes Pós-Resolução (Validação):
         ◦ Access Mode VLAN: 20
     2. Um novo teste de ping foi disparado da máquina na VLAN 20 em direção à máquina na VLAN 30.
     3. Status: Comunicação Inter-VLAN estabelecida com sucesso. Roteamento e segmentação operando conforme o projeto. Incidente encerrado.
+    teste
