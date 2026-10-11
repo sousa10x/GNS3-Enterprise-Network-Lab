@@ -2,6 +2,56 @@
 ! CONFIGURACAO INICIAL - SWITCH CORE
 ! ==========================================
 
+enable
+configure terminal
 
+! Ativacao do Roteamento
+ip routing
 
-teste
+! Criacao das VLANs
+vlan 10,20,30,40,99
+exit
+
+! Configuracao dos Gateways (SVIs)
+interface vlan 10
+ ip address 172.16.10.1 255.255.255.0
+ no shutdown
+interface vlan 20
+ ip address 172.16.20.1 255.255.255.0
+ no shutdown
+interface vlan 30
+ ip address 172.16.30.1 255.255.255.0
+ no shutdown
+interface vlan 40
+ ip address 172.16.40.1 255.255.255.0
+ no shutdown
+interface vlan 99
+ ip address 172.16.99.1 255.255.255.0
+ no shutdown
+exit
+
+! Portas Trunk para os Switches Access
+interface range Ethernet 0/1 - 2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ no shutdown
+exit
+
+! Portas de Acesso (VLAN 99)
+interface range Ethernet 0/3 , Ethernet 1/0 - 2
+ switchport mode access
+ switchport access vlan 99
+ no shutdown
+exit
+
+! Porta Roteada para o pfSense
+interface Ethernet 0/0
+ no switchport
+ ip address 10.0.2.1 255.255.255.0
+ no shutdown
+exit
+
+! Rota padrao para redes externas
+ip route 0.0.0.0 0.0.0.0 10.0.2.2
+end
+swrite memory
