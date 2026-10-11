@@ -5,14 +5,25 @@
 enable
 configure terminal
 
-! Ativacao do Roteamento
+! 1. Ativar Roteamento (Transforma o Core no "Roteador" da rede interna)
 ip routing
 
-! Criacao das VLANs
-vlan 10,20,30,40,99
+! 2. Criacao das VLANs (Departamentos + Servidores + Seguranca)
+vlan 10
+ name TI
+vlan 20
+ name RECURSOS_HUMANOS
+vlan 30
+ name DIRETORIA
+vlan 40
+ name VISITANTES
+vlan 99
+ name SERVIDORES
+vlan 321
+ name NATIVA_MORTA
 exit
 
-! Configuracao dos Gateways (SVIs)
+! 3. Criacao dos Gateways (Avatares do Switch em cada rede)
 interface vlan 10
  ip address 172.16.10.1 255.255.255.0
  no shutdown
@@ -30,28 +41,33 @@ interface vlan 99
  no shutdown
 exit
 
-! Portas Trunk para os Switches Access
+! 4. Portas Trunk (Para os Switches Access 1 e 2) - Com seguranca
 interface range Ethernet 0/1 - 2
  switchport trunk encapsulation dot1q
  switchport mode trunk
+ switchport trunk native vlan 321
  no shutdown
 exit
 
-! Portas de Acesso (VLAN 99)
+! 5. Portas de Acesso (Onde vai ligar o AD, Zabbix, Radius, etc.)
 interface range Ethernet 0/3 , Ethernet 1/0 - 2
  switchport mode access
  switchport access vlan 99
+ spanning-tree portfast
  no shutdown
 exit
 
-! Porta Roteada para o pfSense
+! 6. Porta Roteada para o Firewall (pfSense)
 interface Ethernet 0/0
  no switchport
  ip address 10.0.2.1 255.255.255.0
  no shutdown
 exit
-
-! Rota padrao para redes externas
 ip route 0.0.0.0 0.0.0.0 10.0.2.2
+
+! 7. SNMP para o Zabbix monitorizar este switch
+snmp-server community public RO
+snmp-server location Rack-Core
+snmp-server contact Julio-Sousa
 end
-swrite memory
+do write memory
