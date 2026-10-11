@@ -6,9 +6,9 @@ configure terminal
 
 ! 1. Criacao apenas das VLANs necessarias neste switch
 vlan 10
- name TI
+ name Diretoria/Corp/TI
 vlan 20
- name RECURSOS_HUMANOS
+ name Comercial/Vendas
 vlan 99
  name GESTAO_ZABBIX
 vlan 321

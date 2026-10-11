@@ -10,11 +10,11 @@ ip routing
 
 ! 2. Criacao das VLANs (Departamentos + Servidores + Seguranca)
 vlan 10
- name TI
+ name Diretoria/Corp/TI
 vlan 20
- name RECURSOS_HUMANOS
+ name Comercial/Vendas
 vlan 30
- name DIRETORIA
+ name Recursos_Humanos
 vlan 40
  name VISITANTES
 vlan 99

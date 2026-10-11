@@ -6,7 +6,7 @@ configure terminal
 
 ! 1. Criacao apenas das VLANs necessarias neste switch
 vlan 30
- name DIRETORIA
+ name Recursos_Humanos
 vlan 40
  name VISITANTES
 vlan 99
