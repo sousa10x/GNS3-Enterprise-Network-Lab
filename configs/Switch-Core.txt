@@ -23,7 +23,7 @@ vlan 999
  name NATIVA_MORTA
 exit
 
-! 3. Criacao dos Gateways (Avatares do Switch em cada rede)
+! 3. Criacao dos Gateways
 interface vlan 10
  ip address 172.16.10.1 255.255.255.0
  no shutdown
@@ -69,5 +69,16 @@ ip route 0.0.0.0 0.0.0.0 10.0.2.2
 snmp-server community public RO
 snmp-server location Rack-Core
 snmp-server contact Julio-Sousa
+end
+! 8. transformando o Switch Core num "DHCP Relay" (Estafeta de DHCP).
+configure terminal
+interface vlan 10
+ ip helper-address 172.16.99.10
+interface vlan 20
+ ip helper-address 172.16.99.10
+interface vlan 30
+ ip helper-address 172.16.99.10
+interface vlan 40
+ ip helper-address 172.16.99.10
 end
 write memory
