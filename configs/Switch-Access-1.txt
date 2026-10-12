@@ -6,12 +6,12 @@ configure terminal
 
 ! 1. Criacao apenas das VLANs necessarias neste switch
 vlan 10
- name Diretoria/Corp/TI
+ name Diretoria_Corp_TI
 vlan 20
- name Comercial/Vendas
+ name Comercial_Vendas
 vlan 99
  name GESTAO_ZABBIX
-vlan 321
+vlan 999
  name NATIVA_MORTA
 exit
 
@@ -26,8 +26,8 @@ ip default-gateway 172.16.99.1
 interface Ethernet 0/0
  switchport trunk encapsulation dot1q
  switchport mode trunk
- switchport trunk native vlan 321
- switchport trunk allowed vlan 10,20,99,321
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,99,999
  no shutdown
 exit
 
@@ -50,8 +50,8 @@ exit
 
 ! 5. Ativacao do SNMP para o Zabbix (Somente Leitura / RO)
 ! "public" e a senha/community, pode mudar para outra se preferir
-snmp-server community lab RO
+snmp-server community public RO
 snmp-server location Rack-Andar-1
 snmp-server contact Julio-Sousa
 end
-do write memory
+write memory

@@ -10,16 +10,16 @@ ip routing
 
 ! 2. Criacao das VLANs (Departamentos + Servidores + Seguranca)
 vlan 10
- name Diretoria/Corp/TI
+ name Diretoria_Corp_TI
 vlan 20
- name Comercial/Vendas
+ name Comercial_Vendas
 vlan 30
  name Recursos_Humanos
 vlan 40
  name VISITANTES
 vlan 99
  name SERVIDORES
-vlan 321
+vlan 999
  name NATIVA_MORTA
 exit
 
@@ -45,7 +45,7 @@ exit
 interface range Ethernet 0/1 - 2
  switchport trunk encapsulation dot1q
  switchport mode trunk
- switchport trunk native vlan 321
+ switchport trunk native vlan 999
  no shutdown
 exit
 
@@ -70,4 +70,4 @@ snmp-server community public RO
 snmp-server location Rack-Core
 snmp-server contact Julio-Sousa
 end
-do write memory
+write memory

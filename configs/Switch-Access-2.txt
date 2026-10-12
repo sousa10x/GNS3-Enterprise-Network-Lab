@@ -11,7 +11,7 @@ vlan 40
  name VISITANTES
 vlan 99
  name GESTAO_ZABBIX
-vlan 321
+vlan 999
  name NATIVA_MORTA
 exit
 
@@ -29,7 +29,7 @@ interface Ethernet 0/0
  switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk native vlan 999
- switchport trunk allowed vlan 30,40,99,321
+ switchport trunk allowed vlan 30,40,99,999
  no shutdown
 exit
 
@@ -55,4 +55,4 @@ snmp-server community public RO
 snmp-server location Rack-Access-2
 snmp-server contact Julio-Sousa
 end
-do write memory
+write memory
