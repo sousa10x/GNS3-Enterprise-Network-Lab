@@ -60,10 +60,10 @@ exit
 ! 6. Porta Roteada para o Firewall (pfSense)
 interface Ethernet 0/0
  no switchport
- ip address 10.0.2.1 255.255.255.0
+ ip address 10.0.2.2 255.255.255.0
  no shutdown
 exit
-ip route 0.0.0.0 0.0.0.0 10.0.2.2
+ip route 0.0.0.0 0.0.0.0 10.0.2.1
 
 ! 7. SNMP para o Zabbix monitorizar este switch
 snmp-server community public RO
