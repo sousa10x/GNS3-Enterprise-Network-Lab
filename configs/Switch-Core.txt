@@ -42,10 +42,12 @@ interface vlan 99
 exit
 
 ! 4. Portas Trunk (Para os Switches Access 1 e 2) - Com seguranca
+configure terminal
 interface range Ethernet 0/1 - 2
  switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99,999
  no shutdown
 exit
 
